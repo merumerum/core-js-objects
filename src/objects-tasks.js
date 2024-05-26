@@ -188,15 +188,14 @@ function sellTickets(queue) {
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
  */
-class Rectangle {
-  constructor(width, height) {
-    this.width = width;
-    this.height = height;
-  }
-
-  getArea() {
-    return this.width * this.height;
-  }
+function Rectangle(width, height) {
+  return {
+    width,
+    height,
+    getArea() {
+      return width * height;
+    },
+  };
 }
 
 /**
@@ -373,33 +372,101 @@ function group(array, keySelector, valueSelector) {
  *  For more examples see unit tests.
  */
 
+class Builder {
+  constructor(value, order, count = 0) {
+    this.value = value;
+    this.order = order;
+    this.count = count;
+  }
+
+  element() {
+    if (this.order > 1) Builder.orderError();
+    return Builder.repeatError();
+  }
+
+  id(iden) {
+    if (this.order > 2) Builder.orderError();
+    this.count += 1;
+    if (this.count >= 2) Builder.repeatError();
+    this.value += `#${iden}`;
+    return this;
+  }
+
+  class(cls) {
+    if (this.order > 3) Builder.orderError();
+    this.value += `.${cls}`;
+    return this;
+  }
+
+  attr(atr) {
+    if (this.order > 4) Builder.orderError();
+    this.value += `[${atr}]`;
+    return this;
+  }
+
+  pseudoClass(pC) {
+    if (this.order > 5) Builder.orderError();
+    this.value += `:${pC}`;
+    return this;
+  }
+
+  pseudoElement(pE) {
+    if (this.order > 6) Builder.orderError();
+    this.count += 1;
+    if (this.count >= 2) Builder.repeatError();
+    this.value += `::${pE}`;
+    return this;
+  }
+
+  stringify() {
+    return this.value;
+  }
+
+  static repeatError() {
+    throw new Error(
+      'Element, id and pseudo-element should not occur more then one time inside the selector!'
+    );
+  }
+
+  static orderError() {
+    throw new Error(
+      'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element!'
+    );
+  }
+}
+
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+    return new Builder(value, 1, 0);
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    return new Builder(`#${value}`, 2, 1);
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    return new Builder(`.${value}`, 3);
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    return new Builder(`[${value}]`, 4);
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    return new Builder(`:${value}`, 5);
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    return new Builder(`::${value}`, 6, 1);
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    const res = `${selector1.stringify()} ${combinator} ${selector2.stringify()}`;
+    return {
+      stringify() {
+        return res;
+      },
+    };
   },
 };
 
