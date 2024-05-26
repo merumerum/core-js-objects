@@ -384,37 +384,37 @@ class Builder {
     return Builder.repeatError();
   }
 
-  id(iden) {
+  id(value) {
     if (this.order > 2) Builder.orderError();
     this.count += 1;
     if (this.count >= 2) Builder.repeatError();
-    this.value += `#${iden}`;
+    this.value += `#${value}`;
     return this;
   }
 
-  class(cls) {
+  class(value) {
     if (this.order > 3) Builder.orderError();
-    this.value += `.${cls}`;
+    this.value += `.${value}`;
     return this;
   }
 
-  attr(atr) {
+  attr(value) {
     if (this.order > 4) Builder.orderError();
-    this.value += `[${atr}]`;
+    this.value += `[${value}]`;
     return this;
   }
 
-  pseudoClass(pC) {
+  pseudoClass(value) {
     if (this.order > 5) Builder.orderError();
-    this.value += `:${pC}`;
+    this.value += `:${value}`;
     return this;
   }
 
-  pseudoElement(pE) {
+  pseudoElement(value) {
     if (this.order > 6) Builder.orderError();
     this.count += 1;
     if (this.count >= 2) Builder.repeatError();
-    this.value += `::${pE}`;
+    this.value += `::${value}`;
     return this;
   }
 
@@ -437,7 +437,7 @@ class Builder {
 
 const cssSelectorBuilder = {
   element(value) {
-    return new Builder(value, 1, 0);
+    return new Builder(value, 1);
   },
 
   id(value) {
