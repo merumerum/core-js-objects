@@ -341,7 +341,7 @@ function group(array, keySelector, valueSelector) {
  *       return new MySuperBaseElementSelector(...)...
  *   },
  *
- * The design of class(es) is totally up to you, but try to make it as simple,
+ * The The design of class(es) is totally up to you, but try to make it as simple,
  * clear and readable as possible.
  *
  * @example
